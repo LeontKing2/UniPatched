@@ -30,4 +30,5 @@ public:
     int getInt();
 
     std::wstring getString();
+    int getCount();
 };
