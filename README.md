@@ -1,4 +1,5 @@
 # UniPatch
+(this was remade half using chatgpt so dont just use it yetdud)
 A tool to parse *.1337 files (exported from x64dbg) and patch the target x86 or x64 file. Also supports "loader mode", where the file will be patched in memory at runtime rather than modifying the file. Loader mode supports supplying an EXE name with the -t flag (in the case that the *.1337 file targets a dll). Finally, loader mode allows argument options to modify the number of times to attempt and time between attempts, to read the module imageBase and the original bytes in memory (if the target is packed the original bytes may not be unpacked yet). 
 
 ```
