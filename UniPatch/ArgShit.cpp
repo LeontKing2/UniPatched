@@ -67,7 +67,9 @@ bool ArgShit::contains(const char* test) const{
 int ArgShit::getInt() {
     return i;
 }
-
+int ArgShit::getCount() {
+    return argc;
+}
 std::wstring ArgShit::getString() {
     return s;
 }
