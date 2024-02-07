@@ -1,86 +1,73 @@
 #include "ArgShit.h"
+#include <sstream>
+#include <codecvt>
+#include <locale>
 
-std::wstring to_wstring(std::string str)
-{
-	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> strconverter;
-	return strconverter.from_bytes(str);
+std::wstring to_wstring(const std::string& str) {
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> strconverter;
+    return strconverter.from_bytes(str);
 }
 
-std::string to_string(std::wstring str)
-{
-	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> strconverter;
-	return strconverter.to_bytes(str);
+std::string to_string(const std::wstring& str) {
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> strconverter;
+    return strconverter.to_bytes(str);
 }
 
 std::string leadingZero(uint64_t num) {
-	std::stringstream stream;
-	stream << (num < 16 ? "0" : "") << std::hex << (0xFF & num);
-	return stream.str();
+    std::stringstream stream;
+    stream << (num < 16 ? "0" : "") << std::hex << (0xFF & num);
+    return stream.str();
 }
 
-ArgShit::ArgShit() {
-	this->i = 0;
-	this->s = L"";
+ArgShit::ArgShit() : i(0), s(L"") {}
+
+ArgShit::ArgShit(char* _argv[], int _argc, const char* find) : i(0), s(L"") {
+    this->argv = _argv;
+    this->argc = _argc;
+    this->parseArg(find);
 }
 
-ArgShit::ArgShit(char* _argv[], int _argc, const char* find) {
-	this->i = 0;
-	this->s = L"";
-	this->argv = _argv;
-	this->argc = _argc;
-	this->parseArg(find);
-}
-
-ArgShit::ArgShit(char* _argv[], int _argc) {
-	this->i = 0;
-	this->s = L"";
-	this->argv = _argv;
-	this->argc = _argc;
+ArgShit::ArgShit(char* _argv[], int _argc) : i(0), s(L"") {
+    this->argv = _argv;
+    this->argc = _argc;
 }
 
 void ArgShit::parseArg(const char* find) {
-	this->i = 0;
-	this->s = L"";
-	if (this->argc != 0 && this->argc > 3) {
-		std::stringstream conv;
-		for (int o = 2; o < this->argc; o++) {
-			if (strcmp(this->argv[o], find) == 0 && (o + 1 < this->argc) && strlen(this->argv[o + 1]) > 0) {
-				conv << this->argv[o + 1];
-				conv >> this->i;
-				this->s = to_wstring(conv.str());
-			}
-		}
-	}
+    i = 0;
+    s = L"";
+    if (argc > 3) {
+        for (int o = 2; o < argc - 1; ++o) {
+            if (strcmp(argv[o], find) == 0 && strlen(argv[o + 1]) > 0) {
+                std::stringstream conv(argv[o + 1]);
+                conv >> i;
+                s = to_wstring(conv.str());
+                break; // No need to continue after finding the argument
+            }
+        }
+    }
 }
 
 char* ArgShit::getArg(int ind) {
-	if (ind < this->argc) {
-		return this->argv[ind];
-	}
-	else {
-		return 0;
-	}
+    if (ind < argc)
+        return argv[ind];
+    else
+        return nullptr; // Return nullptr for out-of-bounds access
 }
 
-bool ArgShit::contains(const char* test) {
-	if (this->argc != 0 && this->argc > 2) {
-		for (int _i = 2; _i < this->argc; _i++) {
-			if (strcmp(this->argv[_i], test) == 0)
-				return true;
-		}
-		return false;
-	}
-	else {
-		return false;
-	}
+bool ArgShit::contains(const char* test) const{
+    if (argc > 2) {
+        for (int _i = 2; _i < argc; ++_i) {
+            if (strcmp(argv[_i], test) == 0)
+                return true;
+        }
+    }
+    return false;
 }
 
-int ArgShit::getInt()
-{
-	return this->i;
+int ArgShit::getInt() {
+    return i;
 }
 
-std::wstring ArgShit::getString()
-{
-	return this->s;
+std::wstring ArgShit::getString() {
+    return s;
 }
