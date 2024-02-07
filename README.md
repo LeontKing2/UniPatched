@@ -14,3 +14,4 @@ Usage: UniPatch.exe <1337_file_path> [options]
         -pa <number>    Number of times to attempt to check original byte before patching (default:200)
         -pw <number>    Number of miliseconds to wait between checking original byte again (default:1)
 ```
+Credits to [Frank Lewis](https://github.com/fjlj/UniPatch)
